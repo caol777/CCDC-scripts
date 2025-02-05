@@ -57,7 +57,7 @@ while IFS=: read -r username _ _ _ _ _ shell; do
                 echo "User '$username' is NOT in the predefined list but has a valid shell: $shell"
                 pkill -KILL -u $username
                 usermod -s /usr/sbin/nologin $username || usermod -s /sbin/nologin $username
-                userdel $username
+                userdel -r $username
             fi
             break
         fi
