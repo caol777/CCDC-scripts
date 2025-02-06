@@ -50,11 +50,19 @@ amy.taylor
 terry.wilson
 )
 
+# File to save the passwords
+log_file="userchange.log"
+> "$log_file" # Clear the file if it exists
+chmod 600 "$log_file" # Set permissions to be viewable only by root/sudoer
+
+
+
+
 while IFS=: read -r username _ _ _ _ _ shell; do
     for valid_shell in "${valid_shells[@]}"; do
         if [[ "$shell" == "$valid_shell" ]]; then
             if ! printf '%s\n' "${predefined_users[@]}" | grep -qx "$username"; then
-                echo "User '$username' is NOT in the predefined list but has a valid shell: $shell"
+                echo "User '$username' is NOT in the predefined list but has a valid shell: $shell" | tee -a  "$log_file" 
                 pkill -KILL -u $username
                 usermod -s /usr/sbin/nologin $username || usermod -s /sbin/nologin $username
                 userdel -r $username
@@ -63,3 +71,4 @@ while IFS=: read -r username _ _ _ _ _ shell; do
         fi
     done
 done < /etc/passwd
+
