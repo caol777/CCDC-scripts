@@ -32,7 +32,7 @@ cp "$PAM_FILE" "${PAM_FILE}.bak"
 
 # Add or modify the PAM configuration to enforce password policies
 if grep -q "pam_pwquality.so" "$PAM_FILE"; then
-    sed -i 's/.*pam_pwquality.so.*/password requisite pam_pwquality.so retry=3 minlen=16 ucredit=-1 lcredit=-1 dcredit=-1 ocredit=-1/' "$PAM_FILE"
+    sed -i 's/.*pam_pwquality.so.*/password requisite pam_pwquality.so retry=3 minlen=10 ucredit=-1 lcredit=-1 dcredit=-1 ocredit=-1/' "$PAM_FILE"
 else
     echo "password requisite pam_pwquality.so retry=3 minlen=16 ucredit=-1 lcredit=-1 dcredit=-1 ocredit=-1" >> "$PAM_FILE"
 fi
