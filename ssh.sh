@@ -9,7 +9,7 @@ fi
 # Variables
 SSH_CONFIG="/etc/ssh/sshd_config"
 NEW_SSH_PORT=2222
-ALLOWED_USERS="jeremy.rover maxwell.starling jack.harris emily.chen william.wilson melissa.chen john.taylor laura.harris alan.chen anna.wilson matthew.taylor"
+ALLOWED_USERS="seccdc_black postgres root jeremy.rover maxwell.starling jack.harris emily.chen william.wilson melissa.chen john.taylor laura.harris alan.chen anna.wilson matthew.taylor"
 
 # Backup the original SSH configuration file
 cp $SSH_CONFIG ${SSH_CONFIG}.bak
