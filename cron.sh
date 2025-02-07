@@ -24,7 +24,7 @@ chmod 600 /etc/cron.deny
 chown root:root /etc/cron.deny
 
 # Add authorized users to cron.allow
-echo "root" > /etc/cron.allow
+echo "root" > /etc/cron.allow 
 echo "jeremy.rover" >> /etc/cron.allow
 echo "maxwell.starling" >> /etc/cron.allow
 echo "jack.harris" >> /etc/cron.allow
