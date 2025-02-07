@@ -6,27 +6,36 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-# Create /etc/cron.allow and add sudoers and root
-echo "root" > /etc/cron.allow
-getent group sudo | awk -F: '{print $4}' | tr ',' '\n' >> /etc/cron.allow
-
-# Create /etc/cron.deny and deny all other users
-awk -F: '{print $1}' /etc/passwd | grep -v -E '^(root|$(getent group sudo | awk -F: '{print $4}' | tr ',' '|'))$' > /etc/cron.deny
-
-# Set permissions on /etc/cron.allow and /etc/cron.deny
-chmod 600 /etc/cron.allow /etc/cron.deny
-
-# Set permissions on cron directories and files
-chmod 600 /etc/crontab
+# Set permissions for cron directories and files
+chmod 700 /etc/crontab
 chmod 700 /etc/cron.d
-chmod 700 /var/spool/cron
+chmod 700 /etc/cron.daily
+chmod 700 /etc/cron.hourly
+chmod 700 /etc/cron.monthly
+chmod 700 /etc/cron.weekly
 
-# Output message
-echo "Cron has been hardened. Only sudoers and root can use crontabs."
+# Restrict access to cron.allow and cron.deny
+touch /etc/cron.allow
+chmod 600 /etc/cron.allow
+chown root:root /etc/cron.allow
 
-# Verify the changes
-echo "Contents of /etc/cron.allow:"
-cat /etc/cron.allow
+touch /etc/cron.deny
+chmod 600 /etc/cron.deny
+chown root:root /etc/cron.deny
 
-echo "Contents of /etc/cron.deny:"
-cat /etc/cron.deny
+# Add authorized users to cron.allow
+echo "root" > /etc/cron.allow
+# Add other authorized users as needed
+# echo "username" >> /etc/cron.allow
+
+# Ensure cron.deny is empty
+> /etc/cron.deny
+
+# Disable unnecessary cron services
+systemctl disable anacron
+systemctl stop anacron
+
+# Restart cron service to apply changes
+systemctl restart cron
+
+echo "Cron job hardening completed successfully."
