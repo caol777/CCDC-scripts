@@ -18,19 +18,15 @@ log_file="userchange.log"
 chmod 600 "$log_file"
 
 while IFS=: read -r username _ _ _ _ _ shell; do
-    for valid_shell in "${valid_shells[@]}"; do
-        if [[ "$shell" == "$valid_shell" ]]; then
-            if ! printf '%s\n' "${predefined_users[@]}" | grep -qx "$username"; then
-                echo "Removing unauthorized user: $username" | tee -a "$log_file"
-                pkill -KILL -u $username
-                usermod -s /usr/sbin/nologin $username || usermod -s /sbin/nologin $username
-                userdel -r $username
-            fi
-            break
+    if [[ " ${valid_shells[*]} " == *" $shell "* ]]; then
+        if ! printf '%s\n' "${predefined_users[@]}" | grep -qx "$username"; then
+            echo "Removing unauthorized user: $username" | tee -a "$log_file"
+            pkill -KILL -u "$username"
+            usermod -s /usr/sbin/nologin "$username" || usermod -s /sbin/nologin "$username"
+            userdel -r "$username"
         fi
-    done
+    fi
 done < /etc/passwd
-
 
 # ======== PART 2: Change Passwords for Authorized Users ========
 echo "Changing passwords for authorized users..."
@@ -51,7 +47,6 @@ for user in "${predefined_users[@]}"; do
         echo "User $user not found." | tee -a "$password_file"
     fi
 done
-
 
 # ======== PART 3: Enforce Admin Privileges Only for Authorized Users ========
 echo "Enforcing admin privileges..."
