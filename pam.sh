@@ -39,9 +39,9 @@ cp "$PAM_PASSWORD_FILE" "${PAM_PASSWORD_FILE}.bak"
 
 # Enforce password strength policy
 if grep -q "pam_pwquality.so" "$PAM_PASSWORD_FILE"; then
-    sed -i 's/.*pam_pwquality.so.*/password requisite pam_pwquality.so retry=3 minlen=16 ucredit=-1 lcredit=-1 dcredit=-1 ocredit=-1/' "$PAM_PASSWORD_FILE"
+    sed -i 's/.*pam_pwquality.so.*/password requisite pam_pwquality.so retry=3 minlen=10 ucredit=-1 lcredit=-1 dcredit=-1 ocredit=-1/' "$PAM_PASSWORD_FILE"
 else
-    echo "password requisite pam_pwquality.so retry=3 minlen=16 ucredit=-1 lcredit=-1 dcredit=-1 ocredit=-1" >> "$PAM_PASSWORD_FILE"
+    echo "password requisite pam_pwquality.so retry=3 minlen=10 ucredit=-1 lcredit=-1 dcredit=-1 ocredit=-1" >> "$PAM_PASSWORD_FILE"
 fi
 
 echo "Password policy updated successfully."
