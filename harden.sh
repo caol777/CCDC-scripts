@@ -127,7 +127,10 @@ LoginGraceTime 1m
 PermitEmptyPasswords no
 ClientAliveInterval 300
 ClientAliveCountMax 0
+X11Forwarding no
 UseDNS no
+PasswordAuthentication no
+AllowTcpFowarding no
 EOL
 
 # Restart SSH service to apply changes
