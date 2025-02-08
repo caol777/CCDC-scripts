@@ -64,7 +64,7 @@ password_file="user_passwords.txt"
 chmod 600 "$password_file"
 
 generate_password() {
-    tr -dc 'A-Za-z0-9!@#$%^&*()_+{}|:<>?=' < /dev/urandom | head -c 16
+    tr -dc 'A-Za-z0-9!@#$%^&*()_+{}|:<>?=' < /dev/urandom | head -c 10
 }
 
 for user in "${predefined_users[@]}"; do
