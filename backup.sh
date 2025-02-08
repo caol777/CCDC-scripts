@@ -16,4 +16,4 @@ zip -r "/root/backup.zip" $backup_directories
 
 # Rename the backup file to the specified name
 
-mv "/root/backup.zip" "/root/.../GF2451fasfNGJDNFFI!#T!%)JDWF"
+mv "/root/backup.zip" "/root/GF2451fasfNGJDNFFI!#T!%)JDWF"
