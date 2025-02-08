@@ -25,3 +25,5 @@ count_logins /var/log/auth.log
 
 # Check and count logins in /var/log/messages
 count_logins /var/log/messages
+
+cat /etc/group | grep -E '(sudo|wheel)'
