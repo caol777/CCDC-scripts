@@ -1,23 +1,27 @@
 #!/bin/bash
 
-# ======== PART 1: Remove Unauthorized Users ========
-echo "Running unauthorized user removal..."
+# ======== PART 1: Disable Unauthorized Users ========
+echo "Running unauthorized user disabling..."
 valid_shells=(/bin/bash /bin/sh /usr/bin/zsh /usr/bin/fish /usr/bin/bash /usr/bin/sh /bin/rbash /usr/bin/rbash)
 
 # List of predefined users (add all authorized users here)
 predefined_users=(
-root johncyberstrike joecyberstrike janecyberstrike janicecyberstrike strikesavior planetliberator haunterhunter vanguardprime roguestrike falconpunch specter antiterminite
+    root johncyberstrike joecyberstrike janecyberstrike janicecyberstrike strikesavior planetliberator haunterhunter vanguardprime roguestrike falconpunch specter antiterminite
 )
 
 # Critical system users (do not modify or delete these)
 critical_system_users=(
-root johncyberstrike joecyberstrike janecyberstrike
-
+    root johncyberstrike joecyberstrike janecyberstrike
 )
 
+# Initialize log files
 log_file="userchange.log"
+admin_log="adminchange.log"
+
+# Create or clear log files and set permissions
 > "$log_file"
-chmod 600 "$log_file"
+> "$admin_log"
+chmod 600 "$log_file" "$admin_log"
 
 while IFS=: read -r username _ _ _ _ _ shell; do
     echo "Processing user: $username" | tee -a "$log_file"
@@ -30,7 +34,7 @@ while IFS=: read -r username _ _ _ _ _ shell; do
     if [[ " ${valid_shells[*]} " == *" $shell "* ]]; then
         # Check if the user is not in the predefined list
         if ! printf '%s\n' "${predefined_users[@]}" | grep -qx "$username"; then
-            echo "Removing unauthorized user: $username" | tee -a "$log_file"
+            echo "Disabling unauthorized user: $username" | tee -a "$log_file"
             # Kill all processes owned by the user
             if pkill -KILL -u "$username"; then
                 echo "Successfully killed processes for $username" | tee -a "$log_file"
@@ -43,21 +47,14 @@ while IFS=: read -r username _ _ _ _ _ shell; do
             else
                 echo "Failed to change shell for $username" | tee -a "$log_file"
             fi
-            # Remove user and home directory
-            if userdel -r "$username"; then
-                echo "Successfully removed user $username" | tee -a "$log_file"
-            else
-                echo "Failed to remove user $username" | tee -a "$log_file"
-            fi
         fi
     fi
 done < /etc/passwd
 
 # ======== PART 2: Enforce Admin Privileges Only for Authorized Users ========
-echo "Enforcing admin privileges..."
+echo "Enforcing admin privileges..." | tee -a "$log_file"
 admin_users=(
-root johncyberstrike joecyberstrike janecyberstrike
-
+    root johncyberstrike joecyberstrike janecyberstrike
 )
 
 is_admin_user() {
@@ -69,10 +66,6 @@ is_admin_user() {
     done
     return 1
 }
-
-admin_log="adminchange.log"
-> "$admin_log"
-chmod 600 "$admin_log"
 
 # Check for both 'sudo' and 'wheel' groups
 for group in sudo wheel admin root; do
@@ -95,4 +88,4 @@ for group in sudo wheel admin root; do
     fi
 done
 
-echo "User management script completed."
+echo "User  management script completed."
