@@ -12,6 +12,28 @@ set -e
 # Define iptables command
 ipt="iptables"
 
+# Function to disable IPv6
+disable_ipv6() {
+    echo "[+] Disabling IPv6..."
+
+    # For Ubuntu
+    if [[ -f /etc/lsb-release ]]; then
+        echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
+        echo "net.ipv6.conf.default.disable_ipv6 = 1" >> /etc/sysctl.conf
+        echo "net.ipv6.conf.lo.disable_ipv6 = 1" >> /etc/sysctl.conf
+        sysctl -p
+        echo "[+] IPv6 disabled on Ubuntu."
+
+    # For CentOS
+    elif [[ -f /etc/centos-release ]]; then
+        echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
+        echo "net.ipv6.conf.default.disable_ipv6 = 1" >> /etc/sysctl.conf
+        echo "net.ipv6.conf.lo.disable_ipv6 = 1" >> /etc/sysctl.conf
+        sysctl -p
+        echo "[+] IPv6 disabled on CentOS."
+    fi
+}
+
 # Function to apply firewall rules for CentOS
 apply_centos_firewall_rules() {
     echo "[+] Flushing iptables rules..."
@@ -32,7 +54,7 @@ apply_centos_firewall_rules() {
     echo "[+] Allowing established and related incoming traffic..."
     $ipt -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
-    echo "[+] Allowing incoming TCP on the specified ports:  53 (dns), 443 (HTTPS)"
+    echo "[+] Allowing incoming TCP on the specified ports: 53 (DNS), 443 (HTTPS)"
     $ipt -A INPUT -p tcp --dport 443 -j ACCEPT
     $ipt -A INPUT -p udp --dport 53 -j ACCEPT
 
@@ -72,6 +94,9 @@ apply_ubuntu_firewall_rules() {
     echo "[+] Ubuntu firewall rules applied."
 }
 
+# Disable IPv6
+disable_ipv6
+
 # Check the OS and apply the appropriate firewall rules
 if [[ -f /etc/centos-release ]]; then
     echo "[+] Detected CentOS."
@@ -85,7 +110,4 @@ else
 fi
 
 # Loop to continuously apply firewall rules
-while true; do
-    echo "[+] Sleeping for 30 seconds..."
-    sleep 30
-done
+while true;
