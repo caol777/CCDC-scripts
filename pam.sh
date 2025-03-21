@@ -30,37 +30,6 @@ else
     exit 1
 fi
 
-# ======== Configure Password Policy ========
-echo "Configuring password policy..."
-
-# Determine the PAM password configuration file
-if [[ -f /etc/pam.d/common-password ]]; then
-    # Debian-based systems
-    PAM_PASSWORD_FILE="/etc/pam.d/common-password"
-elif [[ -f /etc/pam.d/system-auth ]]; then
-    # CentOS, Red Hat, Arch Linux
-    PAM_PASSWORD_FILE="/etc/pam.d/system-auth"
-else
-    echo "Password policy PAM configuration file not found. Please check your system."
-    exit 1
-fi
-
-# Backup the original password policy file
-cp "$PAM_PASSWORD_FILE" "${PAM_PASSWORD_FILE}.bak"
-
-# Enforce password strength policy
-if grep -q "pam_pwquality.so" "$PAM_PASSWORD_FILE"; then
-    # Update existing pam_pwquality.so line
-    sed -i 's/.*pam_pwquality.so.*/password requisite pam_pwquality.so retry=3 minlen=10 ucredit=-1 lcredit=-1 dcredit=-1 ocredit=-1/' "$PAM_PASSWORD_FILE"
-else
-    # Add pam_pwquality.so line if it doesn't exist
-    echo "password requisite pam_pwquality.so retry=3 minlen=10 ucredit=-1 lcredit=-1 dcredit=-1 ocredit=-1" >> "$PAM_PASSWORD_FILE"
-fi
-
-echo "Password policy updated successfully."
-echo "Updated Password Policy Configuration:"
-grep "pam_pwquality.so" "$PAM_PASSWORD_FILE"
-
 # ======== Configure User Lockout Policy ========
 echo "Configuring user lockout policy..."
 
