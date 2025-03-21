@@ -56,8 +56,8 @@ done < /etc/passwd
 # ======== PART 2: Enforce Admin Privileges Only for Authorized Users ========
 echo "Enforcing admin privileges..."
 admin_users=(
-jeremy.rover maxwell.starling jack.harris emily.chen william.wilson melissa.chen
-john.taylor laura.harris alan.chen anna.wilson matthew.taylor
+root johncyberstrike joecyberstrike janecyberstrike
+
 )
 
 is_admin_user() {
