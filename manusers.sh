@@ -6,17 +6,13 @@ valid_shells=(/bin/bash /bin/sh /usr/bin/zsh /usr/bin/fish /usr/bin/bash /usr/bi
 
 # List of predefined users (add all authorized users here)
 predefined_users=(
-seccdc_black postgres root jeremy.rover maxwell.starling jack.harris emily.chen william.wilson
-melissa.chen john.taylor laura.harris alan.chen anna.wilson matthew.taylor emily.lee chris.harris
-danielle.wilson heather.chen james.taylor ashley.lee mark.wilson rachel.harris alan.taylor
-amy.wilson kathleen.chen dave.harris jeff.taylor julie.wilson tom.harris sarah.taylor michael.chen
-christine.wilson alan.harris emily.lee tony.taylor tiffany.wilson sharon.harris amy.wilson terry.chen
-rachel.wilson tiffany.harris amy.taylor terry.wilson
+root johncyberstrike joecyberstrike janecyberstrike janicecyberstrike strikesavior planetliberator haunterhunter vanguardprime roguestrike falconpunch specter antiterminite
 )
 
 # Critical system users (do not modify or delete these)
 critical_system_users=(
-root postgres seccdc_black 
+root johncyberstrike joecyberstrike janecyberstrike
+
 )
 
 log_file="userchange.log"
@@ -57,30 +53,7 @@ while IFS=: read -r username _ _ _ _ _ shell; do
     fi
 done < /etc/passwd
 
-# ======== PART 2: Change Passwords for Authorized Users ========
-echo "Changing passwords for authorized users..."
-password_file="user_passwords.txt"
-> "$password_file"
-chmod 600 "$password_file"
-
-generate_password() {
-    tr -dc 'A-Za-z0-9!@#$%^&*()_+{}|:<>?=' < /dev/urandom | head -c 10
-}
-
-for user in "${predefined_users[@]}"; do
-    if id "$user" &>/dev/null; then
-        new_password=$(generate_password)
-        if echo "$user:$new_password" | sudo chpasswd; then
-            echo "Updated password for $user to $new_password" | tee -a "$password_file"
-        else
-            echo "Failed to update password for $user" | tee -a "$password_file"
-        fi
-    else
-        echo "User $user not found." | tee -a "$password_file"
-    fi
-done
-
-# ======== PART 3: Enforce Admin Privileges Only for Authorized Users ========
+# ======== PART 2: Enforce Admin Privileges Only for Authorized Users ========
 echo "Enforcing admin privileges..."
 admin_users=(
 jeremy.rover maxwell.starling jack.harris emily.chen william.wilson melissa.chen
