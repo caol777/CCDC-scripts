@@ -110,4 +110,7 @@ else
 fi
 
 # Loop to continuously apply firewall rules
-while true;
+while true; do
+ echo "[+] Sleeping for 30 seconds..."
+ sleep 30
+done
