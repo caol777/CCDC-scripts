@@ -98,3 +98,10 @@ restrict 127.0.0.1
 restrict <trusted-ntp-server-ip> nomodify notrap
 EOL
     systemctl restart ntp
+else
+    echo "Unsupported operating system."
+    exit 1
+fi
+
+# Final message indicating completion
+echo "System hardening completed successfully."
