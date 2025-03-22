@@ -78,7 +78,6 @@ elif [[ -f /etc/os-release ]]; then
 
     # Hardening FTP
     echo "Configuring FTP (vsftpd)..."
-    apt-get update
     apt-get install -y vsftpd
     cat <<EOL >> /etc/vsftpd.conf
 anonymous_enable=NO
