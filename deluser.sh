@@ -31,6 +31,9 @@ s
   falconpunch 
   specter 
   antiterminite
+ joe
+ john
+ jane
         )
 
     while IFS=: read -r username _ _ _ _ _ shell; do
@@ -52,6 +55,9 @@ s
   joecyberstrike 
   janecyberstrike 
     root
+joe
+john
+jane
     )
 
     for admin in "${administratorGroup[@]}"; do
