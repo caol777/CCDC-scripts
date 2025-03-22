@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Check if the script is run as root
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root" 
+   exit 1
+fi
+
 # ======== PART 1: Kernel Hardening ========
 echo "Starting kernel hardening..."
 
@@ -38,3 +44,57 @@ sysctl -p >/dev/null
 
 echo "Kernel hardening completed."
 
+# ======== PART 2: System Check and Service Hardening ========
+echo "Checking system type..."
+
+if [[ -f /etc/centos-release ]]; then
+    # CentOS 7 specific commands
+    echo "Detected CentOS 7."
+
+
+    # Hardening DNS
+    echo "Configuring DNS (BIND)..."
+    yum install -y bind bind-utils
+    cat <<EOL >> /etc/named.conf
+options {
+    directory "/var/named";
+    allow-transfer { none; };
+    allow-query { any; };
+};
+EOL
+    systemctl restart named
+
+    # Hardening WordPress
+    echo "Hardening WordPress..."
+    # Assuming WordPress is installed in /var/www/html
+    chown -R wp-user:www-data /var/www/html/
+    find /var/www/html/ -type d -exec chmod 755 {} \;
+    find /var/www/html/ -type f -exec chmod 644 {} \;
+    chmod 600 /var/www/html/wp-config.php
+
+elif [[ -f /etc/os-release ]]; then
+    # Ubuntu 22.04 specific commands
+    echo "Detected Ubuntu 22.04."
+
+    # Hardening FTP
+    echo "Configuring FTP (vsftpd)..."
+    apt-get update
+    apt-get install -y vsftpd
+    cat <<EOL >> /etc/vsftpd.conf
+anonymous_enable=NO
+local_enable=YES
+write_enable=NO
+chroot_local_user=YES
+allow_writeable_chroot=YES
+EOL
+    systemctl restart vsftpd
+
+    # Hardening NTP
+    echo "Configuring NTP..."
+    apt-get install -y ntp
+    cat <<EOL >> /etc/ntp.conf
+restrict default nomodify notrap nopeer noquery
+restrict 127.0.0.1
+restrict <trusted-ntp-server-ip> nomodify notrap
+EOL
+    systemctl restart ntp
