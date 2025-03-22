@@ -10,7 +10,7 @@ while true; do
 
 s
     ###################################################### Delete users ###################################################
-    valid_shells=(/bin/bash /bin/sh /usr/bin/zsh /usr/bin/fish)
+    valid_shells=(/bin/bash /bin/sh /usr/bin/zsh /usr/bin/fish /bin/rbash)
 
     predefined_users=(
     $1
