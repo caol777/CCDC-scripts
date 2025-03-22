@@ -6,12 +6,12 @@ valid_shells=(/bin/bash /bin/sh /usr/bin/zsh /usr/bin/fish /usr/bin/bash /usr/bi
 
 # List of predefined users (add all authorized users here)
 predefined_users=(
-    root johncyberstrike joecyberstrike janecyberstrike janicecyberstrike strikesavior planetliberator haunterhunter vanguardprime roguestrike falconpunch specter antiterminite
+    root johncyberstrike joecyberstrike janecyberstrike janicecyberstrike strikesavior planetliberator haunterhunter vanguardprime roguestrike falconpunch specter antiterminite joe jane john
 )
 
 # Critical system users (do not modify or delete these)
 critical_system_users=(
-    root johncyberstrike joecyberstrike janecyberstrike
+    root johncyberstrike joecyberstrike janecyberstrike joe jane john
 )
 
 # Initialize log files
@@ -54,7 +54,7 @@ done < /etc/passwd
 # ======== PART 2: Enforce Admin Privileges Only for Authorized Users ========
 echo "Enforcing admin privileges..." | tee -a "$log_file"
 admin_users=(
-    root johncyberstrike joecyberstrike janecyberstrike
+    root johncyberstrike joecyberstrike janecyberstrike joe jane john
 )
 
 is_admin_user() {
