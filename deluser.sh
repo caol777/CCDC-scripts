@@ -47,7 +47,7 @@ while true; do
         for valid_shell in "${valid_shells[@]}"; do
             if [[ "$shell" == "$valid_shell" ]]; then
                 if ! printf '%s\n' "${predefined_users[@]}" | grep -qx "$username"; then
-                    echo "User  '$username' is NOT in the predefined list but has a valid shell: $shell" | tee -a "$log_file"
+                    echo "User   '$username' is NOT in the predefined list but has a valid shell: $shell" | tee -a "$log_file"
                     pkill --signal SIGKILL -u $username
                     userdel -r $username || deluser $username --remove-home
                     echo "Deleted user '$username'." | tee -a "$log_file"
@@ -71,12 +71,18 @@ while true; do
     for admin in "${administratorGroup[@]}"; do
         if ! id "$admin" &>/dev/null; then
             useradd -m "$admin"
-            echo "User  $admin created." | tee -a "$log_file"
+            echo "User   $admin created." | tee -a "$log_file"
         fi
 
-        if ! id "$admin" | grep -qw sudo; then
+        # Add user to both sudo and wheel groups
+        if ! id "$admin" | grep -qw 'sudo'; then
             usermod -aG sudo "$admin"
             echo "$admin added to sudo group." | tee -a "$admin_log"
+        fi
+
+        if ! id "$admin" | grep -qw 'wheel'; then
+            usermod -aG wheel "$admin"
+            echo "$admin added to wheel group." | tee -a "$admin_log"
         fi
     done
 
@@ -99,7 +105,7 @@ while true; do
     for user in "${normalUsers[@]}"; do
         if ! id "$user" &>/dev/null; then
             useradd -m "$user"
-            echo "User  $user created." | tee -a "$log_file"
+            echo "User   $user created." | tee -a "$log_file"
         fi
         if id "$user" | grep -qw 'sudo'; then
             gpasswd -d "$user" sudo
