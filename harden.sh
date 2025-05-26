@@ -25,6 +25,7 @@ net.ipv4.icmp_ignore_bogus_error_responses = 1
 net.ipv4.conf.all.rp_filter = 1
 net.ipv4.conf.default.rp_filter = 1
 net.ipv4.conf.all.accept_redirects = 0
+net.ipv4.conf.all.log_martians = 1
 net.ipv4.conf.default.accept_redirects = 0
 net.ipv4.icmp_echo_ignore_all = 1
 net.ipv6.conf.default.disable_ipv6 = 1
