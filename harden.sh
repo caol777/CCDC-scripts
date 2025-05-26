@@ -23,6 +23,7 @@ net.ipv4.tcp_challenge_ack_limit = 1000000
 net.ipv4.tcp_rfc1337 = 1
 net.ipv4.icmp_ignore_bogus_error_responses = 1
 net.ipv4.conf.all.accept_redirects = 0
+net.ipv4.conf.default.accept_redirects = 0
 net.ipv4.icmp_echo_ignore_all = 1
 net.ipv6.conf.default.disable_ipv6 = 1
 net.ipv6.conf.all.disable_ipv6 = 1
@@ -39,8 +40,8 @@ fs.suid_dumpable = 0
 kernel.unprivileged_userns_clone = 0
 fs.protected_fifos = 2
 fs.protected_regular = 2
+kernel.exec-shield = 1
 EOL
-
 # Apply kernel parameters
 sysctl -p >/dev/null
 
