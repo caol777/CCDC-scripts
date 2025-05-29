@@ -1,21 +1,157 @@
+
 #!/bin/bash
 
-# Check if the script is run as root
+# ======== OS Detection Function ========
+detect_os() {
+    if [ -f /etc/os-release ]; then
+        . /etc/os-release
+        case "$ID" in
+            ubuntu)
+                opsys="Ubuntu"
+                ;;
+            linuxmint)
+                opsys="Linux Mint"
+                ;;
+            debian)
+                opsys="Debian"
+                ;;
+            almalinux)
+                opsys="AlmaLinux"
+                ;;
+            centos)
+                opsys="CentOS"
+                ;;
+            rhel)
+                opsys="RedHat"
+                ;;
+            *)
+                opsys="Unknown"
+                ;;
+        esac
+    else
+        opsys="Unknown"
+    fi
+    echo "Detected OS: $opsys"
+}
+
+# ======== Root Check ========
 if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root" 
-   exit 1
+   echo "This script must be run as root" 
+   exit 1
 fi
 
-# ======== PART 1: Kernel Hardening ========
+# ======== SSH Hardening ========
+echo "Hardening SSH configuration..."
+SSH_CONFIG="/etc/ssh/sshd_config"
+cp $SSH_CONFIG ${SSH_CONFIG}.bak
+
+sed -i 's/^#*LoginGraceTime.*/LoginGraceTime 60/' $SSH_CONFIG
+sed -i 's/^#*PermitRootLogin.*/PermitRootLogin no/' $SSH_CONFIG
+sed -i 's/^#*Protocol.*/Protocol 2/' $SSH_CONFIG
+sed -i 's/^#*PermitEmptyPasswords.*/PermitEmptyPasswords no/' $SSH_CONFIG
+sed -i 's/^#*PasswordAuthentication.*/PasswordAuthentication yes/' $SSH_CONFIG
+sed -i 's/^#*X11Forwarding.*/X11Forwarding no/' $SSH_CONFIG
+sed -i 's/^#*MaxAuthTries.*/MaxAuthTries 2/' $SSH_CONFIG
+sed -i 's/^#*MaxSessions.*/MaxSessions 2/' $SSH_CONFIG
+
+systemctl restart sshd
+echo "SSH hardening completed."
+
+
+# ======== Login Definitions Hardening ========
+echo "Hardening login definitions..."
+
+LOGIN_DEFS="/etc/login.defs"
+cp $LOGIN_DEFS ${LOGIN_DEFS}.bak
+
+# Set PASS_MAX_DAYS to 30
+sed -i 's/^\s*PASS_MAX_DAYS\s\+[0-9]\+/PASS_MAX_DAYS\t30/' $LOGIN_DEFS
+
+# Set PASS_MIN_DAYS to 10
+sed -i 's/^\s*PASS_MIN_DAYS\s\+[0-9]\+/PASS_MIN_DAYS\t10/' $LOGIN_DEFS
+
+# Set PASS_WARN_AGE to 7
+sed -i 's/^\s*PASS_WARN_AGE\s\+[0-9]\+/PASS_WARN_AGE\t7/' $LOGIN_DEFS
+
+# Set login retry limit
+if grep -q '^\s*LOGIN_RETRIES' $LOGIN_DEFS; then
+    sed -i 's/^\s*LOGIN_RETRIES\s\+[0-9]\+/LOGIN_RETRIES\t3/' $LOGIN_DEFS
+else
+
+# ======== System-Specific Hardening ========
+detect_os
+
+case "$opsys" in
+    "Linux Mint"|"Ubuntu"|"Debian")
+        echo "APT-based system detected: $opsys"
+        apt-get update -y
+        apt-get upgrade -y
+        apt-get dist-upgrade -y
+        killall firefox 2>/dev/null
+        apt-get --purge --reinstall install firefox -y
+        apt-get install clamtk vsftpd ntp -y
+
+        # FTP Hardening
+        cat <<EOL >> /etc/vsftpd.conf
+anonymous_enable=NO
+local_enable=YES
+write_enable=NO
+chroot_local_user=YES
+allow_writeable_chroot=YES
+EOL
+        systemctl restart vsftpd
+
+        # NTP Hardening
+        cat <<EOL >> /etc/ntp.conf
+restrict default nomodify notrap nopeer noquery
+restrict 127.0.0.1
+restrict <trusted-ntp-server-ip> nomodify notrap
+EOL
+        systemctl restart ntp
+        ;;
+
+    "AlmaLinux"|"RedHat"|"CentOS")
+        echo "YUM/DNF-based system detected: $opsys"
+        if command -v dnf &> /dev/null; then
+            dnf update -y
+            dnf upgrade -y
+            dnf reinstall firefox -y
+            dnf install clamtk bind bind-utils -y
+        else
+            yum update -y
+            yum upgrade -y
+            yum reinstall firefox -y
+            yum install clamtk bind bind-utils -y
+        fi
+        # DNS Hardening
+        cat <<EOL >> /etc/named.conf
+options {
+    directory "/var/named";
+    allow-transfer { none; };
+    allow-query { any; };
+};
+EOL
+        systemctl restart named
+
+        # WordPress Hardening
+        echo "Hardening WordPress..."
+        chown -R wp-user:www-data /var/www/html/
+        find /var/www/html/ -type d -exec chmod 755 {} \;
+        find /var/www/html/ -type f -exec chmod 644 {} \;
+        chmod 600 /var/www/html/wp-config.php
+        ;;
+
+    *)
+        echo "Unsupported or unknown OS: $opsys"
+        exit 1
+        ;;
+esac
+
+# ======== Kernel Hardening (Moved to Bottom) ========
 echo "Starting kernel hardening..."
-
-# File to store kernel parameters
 KERNEL_CONF="/etc/sysctl.conf"
-
-# Backup the original sysctl.conf file
 cp $KERNEL_CONF ${KERNEL_CONF}.bak
 
-# Append kernel hardening parameters to sysctl.conf
 cat <<EOL >> $KERNEL_CONF
 net.ipv4.tcp_syncookies = 1
 net.ipv4.tcp_synack_retries = 2
@@ -34,7 +170,7 @@ net.ipv4.conf.default.accept_redirects = 0
 net.ipv4.icmp_echo_ignore_all = 1
 net.ipv4.ip_forward = 0
 net.ipv6.conf.default.disable_ipv6 = 1
-net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv.disable_ipv6 = 1
 kernel.core_uses_pid = 1
 kernel.kptr_restrict = 2
 kernel.modules_disabled = 1
@@ -50,91 +186,8 @@ fs.protected_fifos = 2
 fs.protected_regular = 2
 kernel.exec-shield = 1
 EOL
-# Apply kernel parameters
-sysctl -p >/dev/null
 
+sysctl -p >/dev/null
 echo "Kernel hardening completed."
 
-# ======== PART 2: SSH Hardening ========
-echo "Hardening SSH configuration..."
-
-SSH_CONFIG="/etc/ssh/sshd_config"
-
-# Backup the original SSH config
-cp $SSH_CONFIG ${SSH_CONFIG}.bak
-
-# Apply SSH hardening settings
-sed -i 's/^#*LoginGraceTime.*/LoginGraceTime 60/' $SSH_CONFIG
-sed -i 's/^#*PermitRootLogin.*/PermitRootLogin no/' $SSH_CONFIG
-sed -i 's/^#*Protocol.*/Protocol 2/' $SSH_CONFIG
-sed -i 's/^#*PermitEmptyPasswords.*/PermitEmptyPasswords no/' $SSH_CONFIG
-sed -i 's/^#*PasswordAuthentication.*/PasswordAuthentication yes/' $SSH_CONFIG
-sed -i 's/^#*X11Forwarding.*/X11Forwarding no/' $SSH_CONFIG
-sed -i 's/^#*MaxAuthTries.*/MaxAuthTries 2/' $SSH_CONFIG
-sed -i 's/^#*MaxSessions.*/MaxSessions 2/' $SSH_CONFIG
-
-# Restart SSH service to apply changes
-systemctl restart sshd
-
-echo "SSH hardening completed."
-
-# ======== PART 3: System Check and Service Hardening ========
-echo "Checking system type..."
-
-if [[ -f /etc/centos-release ]]; then
-    # CentOS 7 specific commands
-    echo "Detected CentOS 7."
-
-
-    # Hardening DNS
-    echo "Configuring DNS (BIND)..."
-    yum install -y bind bind-utils
-    cat <<EOL >> /etc/named.conf
-options {
-    directory "/var/named";
-    allow-transfer { none; };
-    allow-query { any; };
-};
-EOL
-    systemctl restart named
-
-    # Hardening WordPress
-    echo "Hardening WordPress..."
-    # Assuming WordPress is installed in /var/www/html
-    chown -R wp-user:www-data /var/www/html/
-    find /var/www/html/ -type d -exec chmod 755 {} \;
-    find /var/www/html/ -type f -exec chmod 644 {} \;
-    chmod 600 /var/www/html/wp-config.php
-
-elif [[ -f /etc/os-release ]]; then
-    # Ubuntu 22.04 specific commands
-    echo "Detected Ubuntu 22.04."
-
-    # Hardening FTP
-    echo "Configuring FTP (vsftpd)..."
-    apt-get install -y vsftpd
-    cat <<EOL >> /etc/vsftpd.conf
-anonymous_enable=NO
-local_enable=YES
-write_enable=NO
-chroot_local_user=YES
-allow_writeable_chroot=YES
-EOL
-    systemctl restart vsftpd
-
-    # Hardening NTP
-    echo "Configuring NTP..."
-    apt-get install -y ntp
-    cat <<EOL >> /etc/ntp.conf
-restrict default nomodify notrap nopeer noquery
-restrict 127.0.0.1
-restrict <trusted-ntp-server-ip> nomodify notrap
-EOL
-    systemctl restart ntp
-else
-    echo "Unsupported operating system."
-    exit 1
-fi
-
-# Final message indicating completion
-echo "System hardening completed successfully."
+echo "✅ System hardening completed successfully."
