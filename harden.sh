@@ -55,7 +55,30 @@ sysctl -p >/dev/null
 
 echo "Kernel hardening completed."
 
-# ======== PART 2: System Check and Service Hardening ========
+# ======== PART 2: SSH Hardening ========
+echo "Hardening SSH configuration..."
+
+SSH_CONFIG="/etc/ssh/sshd_config"
+
+# Backup the original SSH config
+cp $SSH_CONFIG ${SSH_CONFIG}.bak
+
+# Apply SSH hardening settings
+sed -i 's/^#*LoginGraceTime.*/LoginGraceTime 60/' $SSH_CONFIG
+sed -i 's/^#*PermitRootLogin.*/PermitRootLogin no/' $SSH_CONFIG
+sed -i 's/^#*Protocol.*/Protocol 2/' $SSH_CONFIG
+sed -i 's/^#*PermitEmptyPasswords.*/PermitEmptyPasswords no/' $SSH_CONFIG
+sed -i 's/^#*PasswordAuthentication.*/PasswordAuthentication yes/' $SSH_CONFIG
+sed -i 's/^#*X11Forwarding.*/X11Forwarding no/' $SSH_CONFIG
+sed -i 's/^#*MaxAuthTries.*/MaxAuthTries 2/' $SSH_CONFIG
+sed -i 's/^#*MaxSessions.*/MaxSessions 2/' $SSH_CONFIG
+
+# Restart SSH service to apply changes
+systemctl restart sshd
+
+echo "SSH hardening completed."
+
+# ======== PART 3: System Check and Service Hardening ========
 echo "Checking system type..."
 
 if [[ -f /etc/centos-release ]]; then
