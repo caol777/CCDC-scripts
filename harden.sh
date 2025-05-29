@@ -39,6 +39,29 @@ if [[ $EUID -ne 0 ]]; then
    echo "This script must be run as root" 
    exit 1
 fi
+# ======== File Attribute and Permission Hardening ========
+echo "Checking and correcting file attributes and permissions..."
+
+for file in /etc/passwd /etc/shadow /etc/group; do
+    if lsattr "$file" | grep -q 'i'; then
+        echo "Removing immutable attribute from $file..."
+        chattr -i "$file"
+    fi
+
+    # Set secure permissions
+    case "$file" in
+        /etc/passwd|/etc/group)
+            chmod 644 "$file"
+            ;;
+        /etc/shadow)
+            chmod 640 "$file"
+            ;;
+    esac
+
+    echo "Permissions set for $file"
+done
+
+echo "File attribute and permission hardening completed."
 
 # ======== SSH Hardening ========
 echo "Hardening SSH configuration..."
