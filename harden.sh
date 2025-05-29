@@ -76,7 +76,6 @@ sed -i 's/^#*PasswordAuthentication.*/PasswordAuthentication yes/' $SSH_CONFIG
 sed -i 's/^#*X11Forwarding.*/X11Forwarding no/' $SSH_CONFIG
 sed -i 's/^#*MaxAuthTries.*/MaxAuthTries 2/' $SSH_CONFIG
 sed -i 's/^#*MaxSessions.*/MaxSessions 2/' $SSH_CONFIG
-sed -i 's/^#*X11Forwarding.*/X11Forwarding no/' $SSH_CONFIG
 sed -i 's/^#*AllowTcpForwarding.*/AllowTcpForwarding no/' $SSH_CONFIG
 
 
