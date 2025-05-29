@@ -74,9 +74,7 @@ sed -i 's/^\s*PASS_MIN_DAYS\s\+[0-9]\+/PASS_MIN_DAYS\t10/' $LOGIN_DEFS
 sed -i 's/^\s*PASS_WARN_AGE\s\+[0-9]\+/PASS_WARN_AGE\t7/' $LOGIN_DEFS
 
 # Set login retry limit
-if grep -q '^\s*LOGIN_RETRIES' $LOGIN_DEFS; then
-    sed -i 's/^\s*LOGIN_RETRIES\s\+[0-9]\+/LOGIN_RETRIES\t3/' $LOGIN_DEFS
-else
+sed -i 's/^\s*LOGIN_RETRIES\s\+[0-9]\+/LOGIN_RETRIES\t3/' $LOGIN_DEFS
 
 # ======== System-Specific Hardening ========
 detect_os
