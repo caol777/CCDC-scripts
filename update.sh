@@ -55,7 +55,7 @@ update_system
 
 # Install packages
 # Added iptables-persistent and iptables-services to the package list
-packageList="epel-release inotify-tools rsyslog git socat fail2ban zip net-tools htop e2fsprogs ufw rkhunter debsums chkrootkit rbash iptables-persistent iptables-services clamav clamav-daemon"
+packageList="epel-release inotify-tools rsyslog git socat fail2ban zip tmux net-tools htop e2fsprogs ufw rkhunter whowatch curl debsums chkrootkit iptables-persistent iptables-services clamav clamav-daemon"
 install_package $packageList
 
 wget https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy64
