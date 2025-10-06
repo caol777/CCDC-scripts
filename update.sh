@@ -58,6 +58,9 @@ update_system
 packageList="epel-release inotify-tools rsyslog git socat fail2ban zip net-tools htop e2fsprogs ufw rkhunter debsums chkrootkit rbash iptables-persistent iptables-services clamav clamav-daemon"
 install_package $packageList
 
+wget https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy64
+chmod +x pspy64
+
 remove_package cron
 
 # Special handling for UFW, considering its availability
