@@ -190,13 +190,11 @@ net.ipv4.conf.default.accept_source_route = 0
 net.ipv4.conf.all.accept_redirects = 0
 net.ipv4.conf.all.log_martians = 1
 net.ipv4.conf.default.accept_redirects = 0
-net.ipv4.icmp_echo_ignore_all = 1
 net.ipv4.ip_forward = 0
 net.ipv6.conf.default.disable_ipv6 = 1
 net.ipv.disable_ipv6 = 1
 kernel.core_uses_pid = 1
 kernel.kptr_restrict = 2
-kernel.modules_disabled = 1
 kernel.perf_event_paranoid = 2
 kernel.randomize_va_space = 2
 kernel.sysrq = 0
@@ -207,7 +205,6 @@ fs.suid_dumpable = 0
 kernel.unprivileged_userns_clone = 0
 fs.protected_fifos = 2
 fs.protected_regular = 2
-kernel.exec-shield = 1
 EOL
 
 sysctl -p >/dev/null
