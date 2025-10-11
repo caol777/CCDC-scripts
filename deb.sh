@@ -101,6 +101,8 @@ ufw enable
 chmod 644 /etc/passwd
 
 pwck
+sudo scp -r /etc/bind plinktern@172.16.17.5:~/
+sudo scp -r /etc/ssh/sshd_config plinktern@172.16.17.5:~/
 
 chattr +i /etc/bind
 chattr +i /etc/ssh/sshd_config
