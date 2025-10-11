@@ -77,6 +77,7 @@ echo "Package installation and configuration completed."
 
 
 
+
 echo "PermitRootLogin no" >> /etc/ssh/sshd_config
 echo "Protocol 2" >> /etc/ssh/sshd_config
 #SSH whitelist
@@ -88,6 +89,9 @@ apt install ufw -y
 #metasploit default port
 ufw deny 4444
 
+
+ufw default deny incoming
+ufw default allow outgoing
 #sets firewall rules
 ufw allow OpenSSH
 ufw allow Bind9
