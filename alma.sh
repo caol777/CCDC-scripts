@@ -6,9 +6,6 @@ SSH_ALLOWED_USERS="jmomey plinktern"
 
 # --- SCRIPT START ---
 
-# Exit immediately if a command exits with a non-zero status.
-set -e
-
 # Check if running as root
 if [ "$(id -u)" -ne 0 ]; then
   echo "This script must be run as root. Please use sudo." >&2
@@ -37,7 +34,7 @@ echo "--- Downloading pspy64 ---"
 wget https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy64
 chmod +x pspy64
 wget https://github.com/peass-ng/PEASS-ng/releases/latest/download/linpeas.sh
-chmod +x linepeas.sh
+chmod +x linpeas.sh
 # DANGER: This removes the system's task scheduler. Comment this out if unsure.
 echo "Removing cronie package..."
 # dnf remove -y cronie
@@ -91,6 +88,10 @@ sudo scp -r /var/www/ plinktern@172.16.17.5:~/
 sudo chown -R root:root /etc/httpd
 chattr +i /etc/ssh/sshd_config
 sudo chattr +i ~/.bashrc
+sudo chattr +i ~/jmoney/.bashrc
+sudo chattr +i ~/plinktern/.bashrc
+
+
 
 echo "--- Security Hardening Script Finished ---"
 echo "Current firewall configuration:"
