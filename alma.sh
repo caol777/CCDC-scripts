@@ -62,7 +62,6 @@ systemctl restart sshd
 
 echo "--- Enabling Services ---"
 systemctl enable --now fail2ban
-systemctl enable --now clamav-freshclam
 
 echo "--- Configuring Firewall (firewalld) ---"
 # Start and enable firewalld
@@ -71,8 +70,7 @@ systemctl enable --now firewalld
 # Add permanent rules for allowed services
 echo "Adding firewall rules..."
 firewall-cmd --permanent --add-service=ssh
-firewall-cmd --permanent --add-service=http
-
+ 
 # Explicitly deny Metasploit default port with a "reject" action
 firewall-cmd --permanent --add-rich-rule='rule port protocol="tcp" port="4444" reject'
 
@@ -82,12 +80,10 @@ firewall-cmd --reload
 
 echo "--- Setting Secure Permissions & File Integrity ---"
 chmod 644 /etc/passwd
-pwck # Check password file integrity
+pwck # Check password file integrit
 
-# Make key config files immutable (read-only)
-if [ -d "/etc/bind" ]; then
-    chattr +i /etc/bind
-fi
+
+chattr +i /var/www/html/
 chattr +i /etc/ssh/sshd_config
 
 echo "--- Security Hardening Script Finished ---"
