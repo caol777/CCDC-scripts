@@ -25,7 +25,7 @@ echo "--- Installing Required Packages ---"
 dnf install -y epel-release
 
 # Adjusted package list for AlmaLinux
-packageList="inotify-tools rsyslog git fail2ban zip tmux net-tools htop e2fsprogs tcpdump firewalld rkhunter whowatch curl chkrootkit clamav clamav-daemon"
+packageList="inotify-tools rsyslog git fail2ban zip tmux net-tools htop e2fsprogs tcpdump nmap firewalld rkhunter whowatch curl chkrootkit clamav clamav-daemon"
 
 for pkg in $packageList; do
     echo "Attempting to install $pkg..."
