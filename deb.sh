@@ -82,6 +82,8 @@ echo "Protocol 2" >> /etc/ssh/sshd_config
 #SSH whitelist
 echo "AllowUsers jmomey plinktern" >> /etc/ssh/sshd_config
 
+systemctl restart sshd
+
 apt install ufw -y
 #metasploit default port
 ufw deny 4444
