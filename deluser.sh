@@ -16,22 +16,9 @@ while true; do
         $2
         $3
         root
-        blackteam_adm
-        johncyberstrike 
-        joecyberstrike 
-        janecyberstrike 
-        janicecyberstrike 
-        strikesavior 
-        planetliberator 
-        haunterhunter 
-        vanguardprime 
-        roguestrike 
-        falconpunch 
-        specter 
-        antiterminite
-        joe
-        john
-        jane
+        plinktern 
+        jmoney
+
     )
 
     # Initialize log files
