@@ -70,3 +70,24 @@ remove_package cron
 enable_service fail2ban
 
 echo "Package installation and configuration completed."
+
+
+
+passwd -l root
+
+echo "PermitRootLogin no" >> /etc/ssh/sshd_config
+echo "Protocol 2" >> /etc/ssh/sshd_config
+#SSH whitelist
+echo "AllowUsers jmomey plinkerton" >> /etc/ssh/sshd_config
+
+apt install ufw -y
+#metasploit default port
+ufw deny 4444
+
+#sets firewall rules
+ufw allow OpenSSH
+ufw allow Bind9
+ufw allow 53 tcp
+ufw enable
+
+chmod 644 /etc/passwd
