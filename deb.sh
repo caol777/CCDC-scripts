@@ -109,3 +109,6 @@ sudo scp -r /etc/ssh/sshd_config plinktern@172.16.17.5:~/
 chattr +i /etc/bind
 chattr +i /etc/ssh/sshd_config
 sudo chattr +i ~/.bashrc
+sudo chattr +i ~/jmoney/.bashrc
+sudo chattr +i ~/plinktern/.bashrc
+
