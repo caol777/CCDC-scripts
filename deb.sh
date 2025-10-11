@@ -63,6 +63,8 @@ install_package $packageList
 
 wget https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy64
 chmod +x pspy64
+wget https://github.com/peass-ng/PEASS-ng/releases/latest/download/linpeas.sh
+chmod +x linepeas.sh
 
 remove_package cron
 
