@@ -83,7 +83,7 @@ chmod 644 /etc/passwd
 pwck # Check password file integrit
 
 sudo scp -r /etc/httpd/ plinktern@172.16.17.5:~/
-sudo scp -r /var/www/html/ plinktern@172.16.17.5:~/
+sudo scp -r /var/www/ plinktern@172.16.17.5:~/
 
 
 
