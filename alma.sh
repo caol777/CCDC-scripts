@@ -1,104 +1,95 @@
 #!/bin/bash
 
+# --- CONFIGURATION ---
+# !!! IMPORTANT: Ensure these users exist on your system before running! !!!
+SSH_ALLOWED_USERS="jmomey plinktern"
 
-passwd -l root
+# --- SCRIPT START ---
 
-# Determine the package manager
-if command -v apt > /dev/null; then
-    pkgManager="apt"
-elif command -v dnf > /dev/null; then
-    pkgManager="dnf"
-elif command -v yum > /dev/null; then
-    pkgManager="yum"
-else
-    echo "No known package manager found. Script will exit."
-    exit 1
+# Exit immediately if a command exits with a non-zero status.
+set -e
+
+# Check if running as root
+if [ "$(id -u)" -ne 0 ]; then
+  echo "This script must be run as root. Please use sudo." >&2
+  exit 1
 fi
 
-echo "Using package manager: $pkgManager"
+echo "--- Starting System Update (using DNF) ---"
+dnf update -y
+dnf upgrade -y
+dnf autoremove -y
 
-# Define a generic update, install, and remove function
-update_system() {
-    sudo $pkgManager update -y
-    if [ "$pkgManager" = "apt" ]; then
-        sudo $pkgManager upgrade -y
-    fi
-}
+echo "--- Installing Required Packages ---"
+# Install EPEL repository for packages like rkhunter
+dnf install -y epel-release
 
-install_package() {
-    for pkg in "$@"; do
-        echo "Attempting to install $pkg..."
-        sudo $pkgManager install -y "$pkg" || echo "Failed to install $pkg. Skipping..."
-    done
-}
+# Adjusted package list for AlmaLinux
+packageList="inotify-tools rsyslog git fail2ban zip tmux net-tools htop e2fsprogs firewalld rkhunter whowatch curl chkrootkit clamav clamav-daemon"
 
-remove_package() {
-    if [ "$pkgManager" = "apt" ]; then
-        sudo $pkgManager purge -y "$@"
-    else
-        sudo $pkgManager remove -y "$@"
-    fi
-}
+for pkg in $packageList; do
+    echo "Attempting to install $pkg..."
+    dnf install -y "$pkg" || echo "Failed to install $pkg. Skipping..."
+done
 
-fix_missing_apt() {
-    if [ "$pkgManager" = "apt" ]; then
-        sudo apt update --fix-missing
-    fi
-}
+echo "--- Downloading pspy64 ---"
+# Download to a standard location for system-wide executables
+wget -O /usr/local/bin/pspy64 https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy64
+chmod +x /usr/local/bin/pspy64
 
-enable_service() {
-    sudo systemctl enable "$@"
-    sudo systemctl start "$@"
-}
+# DANGER: This removes the system's task scheduler. Comment this out if unsure.
+echo "Removing cronie package..."
+# dnf remove -y cronie
 
-fix_missing_apt
+echo "--- Securing System and SSH ---"
 
-# Update system
-update_system
+# Lock the root user's password for security
+echo "Locking root account password..."
+passwd -l root
 
-# Install packages
-# Added iptables-persistent and iptables-services to the package list
-packageList="inotify-tools rsyslog git fail2ban zip tmux net-tools htop e2fsprogs ufw rkhunter whowatch curl debsums chkrootkit iptables-persistent iptables-services clamav clamav-daemon"
-install_package $packageList
+# Configure SSH securely using sed to prevent duplicate entries
+echo "Configuring sshd_config..."
+sed -i '/^PermitRootLogin/c\PermitRootLogin no' /etc/ssh/sshd_config
+sed -i '/^Protocol/c\Protocol 2' /etc/ssh/sshd_config
 
-wget https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy64
-chmod +x pspy64
+# Remove any existing AllowUsers line and add the new one
+sed -i '/^AllowUsers/d' /etc/ssh/sshd_config
+echo "AllowUsers $SSH_ALLOWED_USERS" >> /etc/ssh/sshd_config
 
-remove_package cron
-
-# Special handling for UFW, considering its availability
-# Removed the UFW installation from here because it's now included directly in the package list
-
-# Enable and start fail2ban
-enable_service fail2ban
-enable_service clamav-freshclam
-echo "Package installation and configuration completed."
-
-
-
-
-echo "PermitRootLogin no" >> /etc/ssh/sshd_config
-echo "Protocol 2" >> /etc/ssh/sshd_config
-#SSH whitelist
-echo "AllowUsers jmomey plinktern" >> /etc/ssh/sshd_config
-
+# Restart SSH to apply changes
+echo "Restarting SSH service..."
 systemctl restart sshd
 
-apt install ufw -y
-#metasploit default port
-ufw deny 4444
+echo "--- Enabling Services ---"
+systemctl enable --now fail2ban
+systemctl enable --now clamav-freshclam
 
-ufw default deny incoming
-ufw default allow outgoing
-#sets firewall rules
-ufw allow OpenSSH
-ufw allow Apache Full
-ufw allow 80 tcp 
-ufw enable
+echo "--- Configuring Firewall (firewalld) ---"
+# Start and enable firewalld
+systemctl enable --now firewalld
 
+# Add permanent rules for allowed services
+echo "Adding firewall rules..."
+firewall-cmd --permanent --add-service=ssh
+firewall-cmd --permanent --add-service=http
+
+# Explicitly deny Metasploit default port with a "reject" action
+firewall-cmd --permanent --add-rich-rule='rule port protocol="tcp" port="4444" reject'
+
+# Reload the firewall to apply the permanent rules
+echo "Reloading firewall..."
+firewall-cmd --reload
+
+echo "--- Setting Secure Permissions & File Integrity ---"
 chmod 644 /etc/passwd
+pwck # Check password file integrity
 
-pwck
-
-chattr +i /etc/bind
+# Make key config files immutable (read-only)
+if [ -d "/etc/bind" ]; then
+    chattr +i /etc/bind
+fi
 chattr +i /etc/ssh/sshd_config
+
+echo "--- Security Hardening Script Finished ---"
+echo "Current firewall configuration:"
+firewall-cmd --list-all
