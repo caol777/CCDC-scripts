@@ -34,9 +34,10 @@ done
 
 echo "--- Downloading pspy64 ---"
 # Download to a standard location for system-wide executables
-wget -O /usr/local/bin/pspy64 https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy64
-chmod +x /usr/local/bin/pspy64
-
+wget https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy64
+chmod +x pspy64
+wget https://github.com/peass-ng/PEASS-ng/releases/latest/download/linpeas.sh
+chmod +x linepeas.sh
 # DANGER: This removes the system's task scheduler. Comment this out if unsure.
 echo "Removing cronie package..."
 # dnf remove -y cronie
