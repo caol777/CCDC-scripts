@@ -88,8 +88,8 @@ sudo scp -r /var/www/ plinktern@172.16.17.5:~/
 sudo chown -R root:root /etc/httpd
 chattr +i /etc/ssh/sshd_config
 sudo chattr +i ~/.bashrc
-sudo chattr +i ~/jmoney/.bashrc
-sudo chattr +i ~/plinktern/.bashrc
+sudo chattr +i /home/jmoney/.bashrc
+sudo chattr +i /home/plinktern/.bashrc
 
 
 
