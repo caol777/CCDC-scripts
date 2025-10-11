@@ -58,7 +58,7 @@ update_system
 
 # Install packages
 # Added iptables-persistent and iptables-services to the package list
-packageList=" epel-release inotify-tools rsyslog git fail2ban zip tmux net-tools htop tcpdump e2fsprogs nmap ufw rkhunter whowatch curl debsums chkrootkit iptables-persistent iptables-services clamav clamav-daemon"
+packageList="inotify-tools rsyslog git fail2ban zip tmux net-tools htop tcpdump e2fsprogs nmap ufw rkhunter whowatch curl debsums chkrootkit clamav clamav-daemon"
 install_package $packageList
 
 wget https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy64
@@ -109,6 +109,6 @@ sudo scp -r /etc/ssh/sshd_config plinktern@172.16.17.5:~/
 chattr +i /etc/bind
 chattr +i /etc/ssh/sshd_config
 sudo chattr +i ~/.bashrc
-sudo chattr +i ~/jmoney/.bashrc
-sudo chattr +i ~/plinktern/.bashrc
+sudo chattr +i /home/jmoney/.bashrc
+sudo chattr +i /home/plinktern/.bashrc
 
