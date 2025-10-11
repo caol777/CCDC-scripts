@@ -78,7 +78,7 @@ passwd -l root
 echo "PermitRootLogin no" >> /etc/ssh/sshd_config
 echo "Protocol 2" >> /etc/ssh/sshd_config
 #SSH whitelist
-echo "AllowUsers jmomey plinkerton" >> /etc/ssh/sshd_config
+echo "AllowUsers jmomey plinktern" >> /etc/ssh/sshd_config
 
 apt install ufw -y
 #metasploit default port
