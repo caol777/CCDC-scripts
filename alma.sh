@@ -83,7 +83,7 @@ chmod 644 /etc/passwd
 pwck # Check password file integrit
 
 
-sudo chown -R root:root /etc/apache2
+sudo chown -R root:root /etc/httpd
 chattr +i /var/www/html/
 chattr +i /etc/ssh/sshd_config
 
