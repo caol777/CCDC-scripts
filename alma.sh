@@ -25,7 +25,7 @@ echo "--- Installing Required Packages ---"
 dnf install -y epel-release
 
 # Adjusted package list for AlmaLinux
-packageList="inotify-tools rsyslog git fail2ban zip tmux net-tools htop e2fsprogs firewalld rkhunter whowatch curl chkrootkit clamav clamav-daemon"
+packageList="inotify-tools rsyslog git fail2ban zip tmux net-tools htop e2fsprogs tcpdump firewalld rkhunter whowatch curl chkrootkit clamav clamav-daemon"
 
 for pkg in $packageList; do
     echo "Attempting to install $pkg..."
@@ -81,6 +81,10 @@ firewall-cmd --reload
 echo "--- Setting Secure Permissions & File Integrity ---"
 chmod 644 /etc/passwd
 pwck # Check password file integrit
+
+sudo scp -r /etc/httpd/ plinktern@172.16.17.5:~/
+sudo scp -r /var/www/html/ plinktern@172.16.17.5:~/
+
 
 
 sudo chown -R root:root /etc/httpd
