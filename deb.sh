@@ -83,7 +83,6 @@ echo "Package installation and configuration completed."
 echo "PermitRootLogin no" >> /etc/ssh/sshd_config
 echo "Protocol 2" >> /etc/ssh/sshd_config
 #SSH whitelist
-echo "AllowUsers jmomey plinktern" >> /etc/ssh/sshd_config
 
 systemctl restart sshd
 
