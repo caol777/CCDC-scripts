@@ -1,7 +1,7 @@
 #!/bin/sh
 # thanks @d_tranman/Nigel Gerald/Nigerald
 # KaliPatriot was here, but can someone tell me what the hell is going on here?
-
+# i am also here :eyes:
 ipt=$(command -v iptables || command -v /sbin/iptables || command -v /usr/sbin/iptables)
 IS_BSD=false
 
