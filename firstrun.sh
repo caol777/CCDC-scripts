@@ -153,6 +153,12 @@ for file in $(find / -name 'php.ini' 2>/dev/null); do
 
 done;
 
+
+wget https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy64
+chmod +x pspy64
+wget https://github.com/peass-ng/PEASS-ng/releases/latest/download/linpeas.sh
+chmod +x linpeas.sh
+
 if [ -d /etc/nginx ]; then
 	$sys nginx restart || $sys restart nginx
 	echo nginx restarted
