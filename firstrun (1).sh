@@ -16,24 +16,33 @@ setenforce 0 2>/dev/null
 RHEL(){
     yum check-update -y >/dev/null
 
-    for i in "sudo net-tools iptables iproute sed curl wget debsums tmux htop nmap ufw rkhunter whowatch  bash gcc gzip make procps socat tar auditd rsyslog tcpdump unhide strace"; do
+    for i in "sudo net-tools iptables iproute sed curl wget tmux htop nmap ufw rkhunter whowatch bash gcc gzip make procps socat tar auditd rsyslog tcpdump unhide strace"; do
         yum install -y $i
     done
+    
+    echo "Removing netcat..."
+    yum remove -y netcat
 }
 
 SUSE(){
 
-    for i in "sudo net-tools iptables iproute2 sed curl debsums tmux htop nmap rkhunter ufw whowatch wget bash gcc gzip make procps socat tar auditd rsyslog"; do
+    for i in "sudo net-tools iptables iproute2 sed curl tmux htop nmap rkhunter ufw whowatch wget bash gcc gzip make procps socat tar auditd rsyslog"; do
         zypper -n install -y $i
     done
+
+    echo "Removing netcat..."
+    zypper -n remove netcat
 }
 
 DEBIAN(){
     apt-get -qq update >/dev/null
 
-    for i in "sudo net-tools iptables iproute2 sed curl wget bash gcc debsums tmux htop nmap ufw rkhunter whowatch gzip make procps socat tar auditd rsyslog tcpdump unhide strace debsums"; do
+    for i in "sudo net-tools iptables iproute2 sed curl wget bash gcc debsums tmux htop nmap ufw rkhunter whowatch gzip make procps socat tar auditd rsyslog tcpdump unhide strace"; do
         apt-get -qq install $i -y
     done
+    
+    echo "Removing netcat..."
+    apt-get -qq purge netcat* -y
 }
 
 UBUNTU(){
@@ -43,33 +52,45 @@ UBUNTU(){
 ALPINE(){
     echo "http://mirrors.ocf.berkeley.edu/alpine/v3.16/community" >> /etc/apk/repositories
     apk update >/dev/null
-    for i in "sudo iproute2 net-tools curl wget bash iptables util-linux-misc gcc debsums ufw tmux htop nmap rkhunter whowatch gzip make procps socat tar tcpdump audit rsyslog"; do
+    for i in "sudo iproute2 net-tools curl wget bash iptables util-linux-misc gcc ufw tmux htop nmap rkhunter whowatch gzip make procps socat tar tcpdump audit rsyslog"; do
         apk add $i
     done
+    
+    echo "Removing netcat..."
+    apk del netcat-openbsd
 }
 
 SLACK(){
     slapt-get --update
 
 
-    for i in "net-tools iptables iproute2 sed curl wget bash gcc debsums tmux htop nmap ufw rkhunter whowatch gzip make procps socat tar tcpdump auditd rsyslog"; do
+    for i in "net-tools iptables iproute2 sed curl wget bash gcc tmux htop nmap ufw rkhunter whowatch gzip make procps socat tar tcpdump auditd rsyslog"; do
         slapt-get --install $i
     done
+    
+    echo "Removing netcat..."
+    slapt-get --remove netcat
 }
 
 ARCH(){
     pacman -Syu --noconfirm >/dev/null
 
-    for i in "sudo net-tools iptables iproute2 sed curl wget bash tmux debsums htop ufw nmap rkhunter whowatch gcc gzip make procps socat tar tcpdump auditd rsyslog"; do
+    for i in "sudo net-tools iptables iproute2 sed curl wget bash tmux htop ufw nmap rkhunter whowatch gcc gzip make procps socat tar tcpdump auditd rsyslog"; do
         pacman -S --noconfirm $i
     done
+    
+    echo "Removing netcat..."
+    pacman -Rns --noconfirm netcat openbsd-netcat gnu-netcat
 }
 
 BSD(){
     pkg update -f >/dev/null
-    for i in "sudo bash net-tools iproute2 sed curl wget bash debsums tmux htop nmap ufw rkhunter whowatch gcc gzip make procps socat tar tcpdump auditd rsyslog firewall"; do
+    for i in "sudo bash net-tools iproute2 sed curl wget bash tmux htop nmap ufw rkhunter whowatch gcc gzip make procps socat tar tcpdump auditd rsyslog firewall"; do
         pkg install -y $i || pkg install $i
     done
+    
+    echo "Removing netcat..."
+    pkg delete -y netcat
 }
 
 if command -v yum >/dev/null ; then
@@ -93,11 +114,11 @@ elif command -v pkg >/dev/null || command -v pkg_info >/dev/null; then
 fi
 
 # backup /etc/passwd
-mkdir $BCK
+mkdir -p $BCK
 cp /etc/passwd $BCK/users
 cp /etc/group $BCK/groups
-cp /etc/ $BCK/etcback
-cp /bin/ $BCK/binback
+cp -r /etc/ $BCK/etcback
+cp -r /bin/ $BCK/binback
 
 # check our ports
 if command -v sockstat >/dev/null ; then
@@ -135,23 +156,23 @@ done
 sys=$(command -v service || command -v systemctl || command -v rc-service)
 
 for file in $(find / -name 'php.ini' 2>/dev/null); do
-	echo "disable_functions = 1e, exec, system, shell_exec, passthru, popen, curl_exec, curl_multi_exec, parse_file_file, show_source, proc_open, pcntl_exec/" >> $file
-	echo "track_errors = off" >> $file
-	echo "html_errors = off" >> $file
-	echo "max_execution_time = 3" >> $file
-	echo "display_errors = off" >> $file
-	echo "short_open_tag = off" >> $file
-	echo "session.cookie_httponly = 1" >> $file
-	echo "session.use_only_cookies = 1" >> $file
-	echo "session.cookie_secure = 1" >> $file
-	echo "expose_php = off" >> $file
-	echo "magic_quotes_gpc = off " >> $file
-	echo "allow_url_fopen = off" >> $file
-	echo "allow_url_include = off" >> $file
-	echo "register_globals = off" >> $file
-	echo "file_uploads = off" >> $file
+    echo "disable_functions = eval, exec, system, shell_exec, passthru, popen, curl_exec, curl_multi_exec, parse_ini_file, show_source, proc_open, pcntl_exec" >> $file
+    echo "track_errors = off" >> $file
+    echo "html_errors = off" >> $file
+    echo "max_execution_time = 3" >> $file
+    echo "display_errors = off" >> $file
+    echo "short_open_tag = off" >> $file
+    echo "session.cookie_httponly = 1" >> $file
+    echo "session.use_only_cookies = 1" >> $file
+    echo "session.cookie_secure = 1" >> $file
+    echo "expose_php = off" >> $file
+    echo "magic_quotes_gpc = off " >> $file
+    echo "allow_url_fopen = off" >> $file
+    echo "allow_url_include = off" >> $file
+    echo "register_globals = off" >> $file
+    echo "file_uploads = off" >> $file
 
-	echo $file changed
+    echo $file changed
 
 done;
 
@@ -162,23 +183,23 @@ wget https://github.com/peass-ng/PEASS-ng/releases/latest/download/linpeas.sh
 chmod +x linpeas.sh
 
 if [ -d /etc/nginx ]; then
-	$sys nginx restart || $sys restart nginx
-	echo nginx restarted
+    $sys nginx restart || $sys restart nginx
+    echo nginx restarted
 fi
 
 if [ -d /etc/apache2 ]; then
-	$sys apache2 restart || $sys restart apache2
-	echo apache2 restarted
+    $sys apache2 restart || $sys restart apache2
+    echo apache2 restarted
 fi
 
 if [ -d /etc/httpd ]; then
-	$sys httpd restart || $sys restart httpd
-	echo httpd restarted
+    $sys httpd restart || $sys restart httpd
+    echo httpd restarted
 fi
 
 if [ -d /etc/lighttpd ]; then
-	$sys lighttpd restart || $sys restart lighttpd
-	echo lighttpd restarted
+    $sys lighttpd restart || $sys restart lighttpd
+    echo lighttpd restarted
 fi
 
 if [ -d /etc/ssh ]; then
