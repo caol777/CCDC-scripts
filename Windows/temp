@@ -1,0 +1,3 @@
+Get-ScheduledTask | 
+    Select-Object TaskName, TaskPath, State, @{Name='Actions';Expression={($_.Actions | Select-Object -ExpandProperty Executable) -join ", "}} |
+    Format-Table -Wrap
