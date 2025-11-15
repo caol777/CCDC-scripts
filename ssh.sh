@@ -13,6 +13,15 @@ if [ -f "$FILE" ]; then
     echo 'AllowTcpForwarding no' >> "$FILE"
     $SED 's/^X11Forwarding/# X11Forwarding/' "$FILE"
     echo 'X11Forwarding no' >> "$FILE"
+
+    # Disable root login
+    $SED 's/^PermitRootLogin/# PermitRootLogin/' "$FILE"
+    echo 'PermitRootLogin no' >> "$FILE"
+    
+    # Disable empty passwords
+    $SED 's/^PermitEmptyPasswords/# PermitEmptyPasswords/' "$FILE"
+    echo 'PermitEmptyPasswords no' >> "$FILE"
+
     if [ ! -z "$NOPUB" ]; then
         $SED 's/^PubkeyAuthentication/# PubkeyAuthentication/' "$FILE"
         echo 'PubkeyAuthentication no' >> "$FILE"
@@ -20,10 +29,6 @@ if [ -f "$FILE" ]; then
     if [ ! -z "$AUTHKEY" ]; then
         $SED 's/^AuthorizedKeysFile/# AuthorizedKeysFile/' "$FILE"
         echo "AuthorizedKeysFile $AUTHKEY" >> "$FILE"
-    fi
-    if [ ! -z "$PERMITUSERS" ]; then
-        $SED 's/^AllowUsers/# AllowUsers/' "$FILE"
-        echo "AllowUsers $PERMITUSERS" >> "$FILE"
     fi
     if [ ! -z "$ROOTPUB" ]; then
         $SED 's/^PubkeyAuthentication/# PubkeyAuthentication/' "$FILE"
