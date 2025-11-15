@@ -16,14 +16,14 @@ setenforce 0 2>/dev/null
 RHEL(){
     yum check-update -y >/dev/null
 
-    for i in "sudo net-tools iptables iproute sed curl wget debsums tmux htop nmap rkhunter whowatch  bash gcc gzip make procps socat tar auditd rsyslog tcpdump unhide strace"; do
+    for i in "sudo net-tools iptables iproute sed curl wget debsums tmux htop nmap ufw rkhunter whowatch  bash gcc gzip make procps socat tar auditd rsyslog tcpdump unhide strace"; do
         yum install -y $i
     done
 }
 
 SUSE(){
 
-    for i in "sudo net-tools iptables iproute2 sed curl debsums tmux htop nmap rkhunter whowatch wget bash gcc gzip make procps socat tar auditd rsyslog"; do
+    for i in "sudo net-tools iptables iproute2 sed curl debsums tmux htop nmap rkhunter ufw whowatch wget bash gcc gzip make procps socat tar auditd rsyslog"; do
         zypper -n install -y $i
     done
 }
@@ -31,7 +31,7 @@ SUSE(){
 DEBIAN(){
     apt-get -qq update >/dev/null
 
-    for i in "sudo net-tools iptables iproute2 sed curl wget bash gcc debsums tmux htop nmap rkhunter whowatch gzip make procps socat tar auditd rsyslog tcpdump unhide strace debsums"; do
+    for i in "sudo net-tools iptables iproute2 sed curl wget bash gcc debsums tmux htop nmap ufw rkhunter whowatch gzip make procps socat tar auditd rsyslog tcpdump unhide strace debsums"; do
         apt-get -qq install $i -y
     done
 }
@@ -43,7 +43,7 @@ UBUNTU(){
 ALPINE(){
     echo "http://mirrors.ocf.berkeley.edu/alpine/v3.16/community" >> /etc/apk/repositories
     apk update >/dev/null
-    for i in "sudo iproute2 net-tools curl wget bash iptables util-linux-misc gcc debsums tmux htop nmap rkhunter whowatch gzip make procps socat tar tcpdump audit rsyslog"; do
+    for i in "sudo iproute2 net-tools curl wget bash iptables util-linux-misc gcc debsums ufw tmux htop nmap rkhunter whowatch gzip make procps socat tar tcpdump audit rsyslog"; do
         apk add $i
     done
 }
@@ -52,7 +52,7 @@ SLACK(){
     slapt-get --update
 
 
-    for i in "net-tools iptables iproute2 sed curl wget bash gcc debsums tmux htop nmap rkhunter whowatch gzip make procps socat tar tcpdump auditd rsyslog"; do
+    for i in "net-tools iptables iproute2 sed curl wget bash gcc debsums tmux htop nmap ufw rkhunter whowatch gzip make procps socat tar tcpdump auditd rsyslog"; do
         slapt-get --install $i
     done
 }
@@ -60,14 +60,14 @@ SLACK(){
 ARCH(){
     pacman -Syu --noconfirm >/dev/null
 
-    for i in "sudo net-tools iptables iproute2 sed curl wget bash tmux debsums htop nmap rkhunter whowatch gcc gzip make procps socat tar tcpdump auditd rsyslog"; do
+    for i in "sudo net-tools iptables iproute2 sed curl wget bash tmux debsums htop ufw nmap rkhunter whowatch gcc gzip make procps socat tar tcpdump auditd rsyslog"; do
         pacman -S --noconfirm $i
     done
 }
 
 BSD(){
     pkg update -f >/dev/null
-    for i in "sudo bash net-tools iproute2 sed curl wget bash debsums tmux htop nmap rkhunter whowatch gcc gzip make procps socat tar tcpdump auditd rsyslog firewall"; do
+    for i in "sudo bash net-tools iproute2 sed curl wget bash debsums tmux htop nmap ufw rkhunter whowatch gcc gzip make procps socat tar tcpdump auditd rsyslog firewall"; do
         pkg install -y $i || pkg install $i
     done
 }
@@ -96,6 +96,8 @@ fi
 mkdir $BCK
 cp /etc/passwd $BCK/users
 cp /etc/group $BCK/groups
+cp /etc/ $BCK/etcback
+cp /bin/ $BCK/binback
 
 # check our ports
 if command -v sockstat >/dev/null ; then
