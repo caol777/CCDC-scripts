@@ -1,3 +1,109 @@
-Get-ScheduledTask | 
-    Select-Object TaskName, TaskPath, State, @{Name='Actions';Expression={($_.Actions | Select-Object -ExpandProperty Executable) -join ", "}} |
-    Format-Table -Wrap
+Task complete. Here is the code for the fan page and the steps to host it on your Windows Server 2019 at `localhost`.
+
+-----
+
+### 🐷 John Pork Fan Page (Code)
+
+This is the HTML and CSS for your fan page.
+
+**File Name:** `index.html`
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JOHN PORK FAN PAGE</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #2c2c2c;
+            color: #f0f0f0;
+            text-align: center;
+            margin: 0;
+            padding: 40px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            border: 2px solid #ff007f;
+            border-radius: 15px;
+            padding: 20px;
+            background-color: #333;
+            box-shadow: 0 0 20px rgba(255, 0, 127, 0.5);
+        }
+        h1 {
+            color: #00f0ff;
+            text-transform: uppercase;
+        }
+        h2 {
+            color: #f0f0f0;
+            font-style: italic;
+            font-weight: normal;
+        }
+        .john-pork-img {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            border-radius: 10px;
+            border: 3px solid #00f0ff;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Welcome to the Hippocampus Fan Page</h1>
+        <h2>He is calling...</h2>
+        
+        <p>Dedicated to the one and only JOHN PORK.</p>
+
+        
+
+    </div>
+
+</body>
+</html>
+```
+
+-----
+
+### 🚀 How to Host on Windows Server 2019 (Localhost)
+
+The best way to do this on a Windows Server is by using **Internet Information Services (IIS)**, which is a built-in feature.
+
+### Step 1: Install the IIS Web Server Role
+
+1.  Open **Server Manager** (it's usually on the Start menu or taskbar).
+
+2.  Click **Manage** \> **Add Roles and Features**.
+
+3.  Click "Next" until you get to the **Server Roles** screen.
+
+4.  In the list, check the box for **Web Server (IIS)**.
+
+5.  A pop-up will ask to add required features. Click **Add Features**.
+
+6.  Click **Next** through the rest of the wizard, then click **Install**.
+
+7.  Wait for the installation to complete.
+
+### Step 2: Create Your Fan Page File
+
+1.  Open **Notepad** as an Administrator (right-click Notepad \> Run as administrator).
+2.  **Copy** the HTML code from the section above and **paste** it into Notepad.
+3.  Go to **File** \> **Save As...**
+4.  In the "Save as type" dropdown, select **All Files (\*.\*)**.
+5.  Save the file with the exact name: `index.html`
+6.  Save it directly into the default IIS web folder: `C:\inetpub\wwwroot\`
+
+### Step 3: Test Your Site
+
+1.  Open any web browser on your server (like Edge or Chrome).
+2.  In the address bar, type `http://localhost` and press **Enter**.
+
+Your John Pork fan page should now be visible, running on your server.
+
+Please forward the Mountain Dew™ Baja Blast Pie.
