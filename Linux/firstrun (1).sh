@@ -139,6 +139,10 @@ fi
 $LIST_CMD > $BCK/listen
 $ESTB_CMD > $BCK/estab
 
+chmod 640 -R /root 
+
+
+
 # pam
 mkdir -p $BCK/pam/conf
 mkdir -p $BCK/pam/pam_libraries
@@ -213,3 +217,5 @@ if [ -d /etc/php/*/fpm ] || [ -n "$file" ]; then
         $sys '*php*' restart || $sys restart '*php*'
         echo php-fpm restarted
 fi
+
+find / -perm 4000 2>/dev/null 
