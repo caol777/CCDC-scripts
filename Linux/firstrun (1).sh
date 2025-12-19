@@ -139,8 +139,9 @@ fi
 $LIST_CMD > $BCK/listen
 $ESTB_CMD > $BCK/estab
 
-chmod 640 -R /root 
+chmod 640 -R /
 
+docker ps >> $BCK/docker
 
 
 # pam
