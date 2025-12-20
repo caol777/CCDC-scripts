@@ -181,6 +181,61 @@ for file in $(find / -name 'php.ini' 2>/dev/null); do
 
 done;
 
+#!/bin/sh
+# @d_tranman/Nigel Gerald/Nigerald
+sys=$(command -v service || command -v systemctl)
+FILE=/etc/ssh/sshd_config
+RC=/etc/rc.d/rc.sshd
+
+if [ -f "$FILE" ]; then
+    SED="sed -i''"
+    if sed --version >/dev/null 2>&1; then
+        SED="sed -i"
+    fi
+    $SED 's/^AllowTcpForwarding/# AllowTcpForwarding/' "$FILE"
+    echo 'AllowTcpForwarding no' >> "$FILE"
+    $SED 's/^X11Forwarding/# X11Forwarding/' "$FILE"
+    echo 'X11Forwarding no' >> "$FILE"
+
+    # Disable root login
+    $SED 's/^PermitRootLogin/# PermitRootLogin/' "$FILE"
+    echo 'PermitRootLogin no' >> "$FILE"
+    
+    # Disable empty passwords
+    $SED 's/^PermitEmptyPasswords/# PermitEmptyPasswords/' "$FILE"
+    echo 'PermitEmptyPasswords no' >> "$FILE"
+
+    if [ ! -z "$NOPUB" ]; then
+        $SED 's/^PubkeyAuthentication/# PubkeyAuthentication/' "$FILE"
+        echo 'PubkeyAuthentication no' >> "$FILE"
+    fi
+    if [ ! -z "$AUTHKEY" ]; then
+        $SED 's/^AuthorizedKeysFile/# AuthorizedKeysFile/' "$FILE"
+        echo "AuthorizedKeysFile $AUTHKEY" >> "$FILE"
+    fi
+    if [ ! -z "$ROOTPUB" ]; then
+        $SED 's/^PubkeyAuthentication/# PubkeyAuthentication/' "$FILE"
+        echo 'PubkeyAuthentication no' >> "$FILE"
+        echo 'Match User root' >> "$FILE"
+        echo '    PubkeyAuthentication yes' >> "$FILE"
+    fi
+
+else
+    echo "Could not find sshd config"
+fi
+
+
+if [ -z $sys ]; then
+  if [ -f "/etc/rc.d/sshd" ]; then
+    RC="/etc/rc.d/sshd"
+  else
+    RC="/etc/rc.d/rc.sshd"
+  fi
+  $RC restart
+else
+  $sys restart ssh || $sys ssh restart || $sys restart sshd || $sys sshd restart 
+fi
+
 
 wget https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy64
 chmod +x pspy64
@@ -219,4 +274,5 @@ if [ -d /etc/php/*/fpm ] || [ -n "$file" ]; then
         echo php-fpm restarted
 fi
 
-find / -perm 4000 2>/dev/null 
+find / -perm 4000 2>/dev/null >> $BCK/suid
+
