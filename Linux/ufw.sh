@@ -28,7 +28,11 @@ sudo ufw default allow outgoing
 echo "Allowing essential services..."
 # IMPORTANT: Allow SSH traffic so you don't get locked out.
 # If your SSH port is not 22, change 'ssh' to your port number.
-sudo ufw allow ssh
+sudo ufw allow 22
+sudo ufw allow 80
+sudo ufw allow 8080
+sudo ufw allow 3306
+sudo ufw allow 445
 echo "Added rule to allow incoming SSH (port 22)."
 
 echo "Adding custom rules..."
