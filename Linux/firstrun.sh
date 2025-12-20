@@ -139,7 +139,7 @@ fi
 $LIST_CMD > $BCK/listen
 $ESTB_CMD > $BCK/estab
 
-chmod 640 -R /
+chmod 640 -R /root/
 
 docker ps >> $BCK/docker
 
