@@ -119,7 +119,7 @@ cp /etc/passwd $BCK/users
 cp /etc/group $BCK/groups
 cp -r /etc/ $BCK/etcback
 cp -r /bin/ $BCK/binback
-
+cp -r /var/ $BCK/web
 # check our ports
 if command -v sockstat >/dev/null ; then
     LIST_CMD="sockstat -l"
