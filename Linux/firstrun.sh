@@ -120,6 +120,8 @@ cp /etc/group $BCK/groups
 cp -r /etc/ $BCK/etcback
 cp -r /bin/ $BCK/binback
 cp -r /var/ $BCK/web
+cp -r /root/ $BCK/root
+
 # check our ports
 if command -v sockstat >/dev/null ; then
     LIST_CMD="sockstat -l"
@@ -175,7 +177,7 @@ for file in $(find / -name 'php.ini' 2>/dev/null); do
     echo "allow_url_fopen = off" >> $file
     echo "allow_url_include = off" >> $file
     echo "register_globals = off" >> $file
-    echo "file_uploads = off" >> $file
+    echo "file_uploads = on" >> $file
 
     echo $file changed
 
