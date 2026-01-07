@@ -3,7 +3,7 @@
 # KaliPatriot | TTU CCDC | Landon Byrge
 
 if [ -z "$BCK" ]; then
-    BCK="/root/.cache"
+    BCK="/tmp/"
 fi
 
 BCK=$BCK/initial
