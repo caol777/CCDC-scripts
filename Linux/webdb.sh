@@ -2,6 +2,7 @@
 # @d_tranman/Nigel Gerald/Nigerald
 # KaliPatriot | TTU CCDC | Landon Byrge
 # hey its shaamad thanks for this script i will def use it
+
 IS_RHEL=false
 IS_DEBIAN=false
 IS_ALPINE=false
