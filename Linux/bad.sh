@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# thank you to uci ccdc for this amazing script
 
 HOSTNAME=$(hostname || cat /etc/hostname)
 echo -e "HOST: $HOSTNAME"
