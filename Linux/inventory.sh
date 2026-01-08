@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+# thank you to uci ccdc for this amazing script
 sep () {
     echo "======================================================================================================="
 }
