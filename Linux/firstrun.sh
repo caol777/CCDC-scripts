@@ -244,6 +244,9 @@ chmod +x pspy64
 wget https://github.com/peass-ng/PEASS-ng/releases/latest/download/linpeas.sh
 chmod +x linpeas.sh
 
+chmod 644 /etc/passwd
+chmod 600 /etc/shadow
+
 if [ -d /etc/nginx ]; then
     $sys nginx restart || $sys restart nginx
     echo nginx restarted
