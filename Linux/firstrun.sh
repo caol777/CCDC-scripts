@@ -284,3 +284,6 @@ fi
 find / -perm 4000 2>/dev/null >> $BCK/suid
 
 ps aux >> $BCK/processes
+cat /etc/crontab >> $BCK/cron1
+ls -altr /var/spool/cron/ >> $BCK/cron2
+crontab -l >> $BCK/cron3
