@@ -121,7 +121,7 @@ cp /etc/passwd $BCK/users
 cp /etc/group $BCK/groups
 cp -r /etc/ $BCK/etcback
 cp -r /bin/ $BCK/binback
-cp -r /var/ $BCK/web
+cp -r /var/www $BCK/web
 cp -r /root/ $BCK/root
 
 # check our ports
@@ -283,3 +283,4 @@ fi
 
 find / -perm 4000 2>/dev/null >> $BCK/suid
 
+ps aux >> $BCK/processes
