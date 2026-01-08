@@ -27,7 +27,7 @@
 # I'm going to make it the best pam script ever written in the history of the world of all time in the universe of all universes of all multiverses of all omniverses of all megaverses of all gigaverses of all teraverses of all petaverses of all exaverses of all zettaverses of all yottaverses of all xennaverses of all wekaverses of all vundaverses of all uqaverses
 # I'm going to make it the best pam script ever written in the history of the world of all time in the universe of all universes of all multiverses of all omniverses of all megaverses of all gigaverses of all teraverses of all petaverses of all exaverses of all zettaverses of all yottaverses of all xennaverses of all wekaverses of all vundaverses of all uqaverses of all trelaverses
 # okay stop copilot
-
+# Hello guys its shaamad thanks for this script im gonna try it out might not use it
 if [ -z "$BCK" ]; then
     BCK="/root/.cache"
 fi
