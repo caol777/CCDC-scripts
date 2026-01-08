@@ -1,6 +1,8 @@
 #!/bin/sh
 # @d_tranman/Nigel Gerald/Nigerald
 # KaliPatriot | TTU CCDC | Landon Byrge
+# shaamad was also here a little
+
 
 if [ -z "$BCK" ]; then
     BCK="/tmp/"
