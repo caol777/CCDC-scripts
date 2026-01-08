@@ -101,6 +101,19 @@ if [ ! -z "$ipt" ]; then
     # $ipt -A OUTPUT -p tcp --sport 80 -j ACCEPT
     # CHECKERR
 
+
+    # Allow SQL template
+    # $ipt -A INPUT -p tcp --dport 3306 -j ACCEPT
+    # CHECKERR
+    # $ipt -A OUTPUT -p tcp --sport 3306 -j ACCEPT
+    # CHECKERR
+
+    # Allow SMB template
+    # $ipt -A INPUT -p tcp --dport 445 -j ACCEPT
+    # CHECKERR
+    # $ipt -A OUTPUT -p tcp --sport 445 -j ACCEPT
+    # CHECKERR
+
     # Block everything else
     $ipt -P INPUT DROP
     CHECKERR
