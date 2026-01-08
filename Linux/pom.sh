@@ -30,7 +30,7 @@
 # Hello guys its shaamad thanks for this script im gonna try it out might not use it
 
 if [ -z "$BCK" ]; then
-    BCK="/root/.cache"
+    BCK="/tmp/initial"
 fi
 
 # $REINSTALL=true - reinstall pam
